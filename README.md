@@ -3,7 +3,7 @@
 _Work in Progress_
 
 ## Motivation
-The authentication process is often the same between project. The goal is to save having to write the boilerplate code to create the widget tree and much of the auth logic.
+The authentication process is often the same between projects. The goal is to save having to write the boilerplate code to create the widget tree and much of the auth logic.
 
 ## Objective
 Automate the authentication process in a new Flutter project.  
