@@ -1,14 +1,19 @@
 # my_auth_package
 
-A new Flutter package project.
+_Work in Progress_
 
-## Getting Started
+## Motivation
+The authentication process is often the same between project. The goal is to save having to write the boilerplate code to create the widget tree and much of the auth logic.
 
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
+## Objective
+Automate the authentication process in a new Flutter project.  
+The package will take the following arguments:
+    - a `LoginView` widget
+    - a `RegisterView` widget
+    - a `Loading` view
+    - a `CustomUser` model class
+    - a Firebase firestore query to get the user data in the database
+    - a function to map the Firestore `DocumentSnapshot` to a `CustomUser` object
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+The package will generate the widget tree.
+
