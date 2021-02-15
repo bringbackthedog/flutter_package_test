@@ -87,17 +87,3 @@ class _AuthenticateState extends State<Authenticate> {
     }
   }
 }
-
-// Widget myloginView = LoginView(x).createLogin();
-
-// Widget createLogin(Function toggleShowLogin) => LoginView(toggleShowLogin);
-
-// class SecondTest extends StatelessWidget {
-//   Widget Function(Function) createLogin;
-//   SecondTest(this.createLogin);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container();
-//   }
-// }
