@@ -1,5 +1,6 @@
 library my_auth_package;
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,18 +16,18 @@ class MyAuthPackage {
   MyAuthPackage({this.loadingView, this.loginView, this.registerView});
 }
 
-var x = MyWidgetTree();
+typedef FirestoreQuery = Future<DocumentSnapshot> Function(User);
 
 class MyWidgetTree extends StatelessWidget {
   static FirebaseAuth _auth = FirebaseAuth.instance;
   Stream get authStatus => _auth.authStateChanges();
-  Widget loginView, registerView, loadingView;
+  Widget loginView, registerView, loadingView, userTypeWrapper;
 
   /// This function fetches the user's data in firestore once the user is logged
   /// in Firebase Auth.
-  Function query;
+  FirestoreQuery query;
 
-  /// This is the custom templa
+  /// This is the custom user template
   Widget customUserModel;
 
   /// This function will convert the Firebase User doc to the [customUserModel]
@@ -40,41 +41,51 @@ class MyWidgetTree extends StatelessWidget {
     @required this.query,
     @required this.customUserModel,
     @required this.convertDocToCustomUserModel,
+    @required this.userTypeWrapper,
   });
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider(
-      create: (context) => MyAuthPackage.authStatus,
+    return StreamProvider.value(
+      value: MyAuthPackage.authStatus,
       builder: (context, child) {
         User firebaseUser = Provider.of<User>(context);
 
         if (firebaseUser == null) return Authenticate();
+
+        return FutureProvider.value(
+          value: query(firebaseUser),
+          child: userTypeWrapper,
+        );
       },
     );
   }
 }
 
+typedef loginView = Widget Function(Function);
+
 ///
 /// AUTHENTICATE
 ///
-
 class Authenticate extends StatefulWidget {
+  // Widget loginView, registerView;
   @override
   _AuthenticateState createState() => _AuthenticateState();
 }
 
 class _AuthenticateState extends State<Authenticate> {
+  StatelessWidget loginView;
+
   bool showLogin = true;
   void toggleLoginRegister() => setState(() => showLogin = !showLogin);
 
   @override
   Widget build(BuildContext context) {
     if (showLogin) {
-      return LoginView(
-        //show Login View
-        toggleLoginRegister: toggleLoginRegister,
-      );
+      return loginView; //(
+      // //show Login View
+      // toggleLoginRegister: toggleLoginRegister,
+      // );
     } else {
       // show Register view
       return RegisterView(toggleLoginRegister: toggleLoginRegister);
