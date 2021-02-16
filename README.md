@@ -18,6 +18,8 @@ The package will generate the auth part of the widget tree.
 - Add `implements AuthView` to the `LoginView` and `RegisterView`
 - Add a `Function` parameter 
 
+e.g.: 
+
 ```dart
 // loginView.dart
 class LoginView extends StatefulWidget implements AuthView {  
@@ -30,7 +32,6 @@ class LoginView extends StatefulWidget implements AuthView {
 }
 ```
 
-e.g.: 
 
 ```dart
 // main.dart
