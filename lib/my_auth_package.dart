@@ -1,68 +1,53 @@
 library my_auth_package;
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-typedef FirestoreQuery = Future<DocumentSnapshot> Function(User);
-
-/// implement this on LoginView and RegisterView
+/// Implement this on LoginView and RegisterView.
+///
+/// Ensures the login/register methods can be constructed through this function.
 mixin AuthView {
   Widget createView(Function toggleShowLogin);
 }
 
 class MyWidgetTree extends StatelessWidget {
-  static FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   final AuthView loginView, registerView;
-  final Widget loadingView, userTypeWrapper;
+  final Widget child;
 
-  /// This function fetches the user's data in firestore once the user is logged
-  /// in Firebase Auth.
-  final FirestoreQuery query; // TODO
-
-  /// This is the custom user template
-  final Widget customUserModel;
-
-  /// This function will convert the Firebase User doc to the [customUserModel]
-  /// provided.
-  final Function convertDocToCustomUserModel;
-
-  Stream<User> get authStatus => _auth.authStateChanges();
+  Stream<User> get _authStatus => _auth.authStateChanges();
 
   MyWidgetTree({
-    @required this.loadingView,
+    /// The login view to be displayed to existing users
     @required this.loginView,
+
+    /// The register view to be displayed to new users
     @required this.registerView,
-    @required this.query,
-    @required this.customUserModel,
-    @required this.convertDocToCustomUserModel,
-    @required this.userTypeWrapper,
+
+    /// The widget to render once the authentication is completed
+    @required this.child,
   });
 
   @override
   Widget build(BuildContext context) {
     return StreamProvider<User>.value(
-      value: authStatus,
-      builder: (context, child) {
+      value: _authStatus,
+      builder: (context, _) {
         User firebaseUser = Provider.of<User>(context);
 
         if (firebaseUser == null)
           return Authenticate(loginView: loginView, registerView: registerView);
 
-        return FutureProvider.value(
-            value: query(firebaseUser), child: userTypeWrapper);
+        return child;
       },
     );
   }
 }
 
-///
 /// AUTHENTICATE
-///
 class Authenticate extends StatefulWidget {
-  // final Widget Function(Function toggleShowLogin) createLoginView;
   final AuthView loginView, registerView;
   Authenticate({
     @required this.loginView,
@@ -80,9 +65,10 @@ class _AuthenticateState extends State<Authenticate> {
   @override
   Widget build(BuildContext context) {
     if (showLogin) {
-      return widget.loginView.createView(toggleLoginRegister); //(
+      // Show login view
+      return widget.loginView.createView(toggleLoginRegister);
     } else {
-      // show Register view
+      // Show Register view
       return widget.registerView.createView(toggleLoginRegister);
     }
   }
